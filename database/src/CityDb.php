@@ -1,46 +1,71 @@
 <?php
-
+require_once 'City.php';
 class CityDb
 {
+    /**
+     * @var PDO
+     */
     private $pdo;
+
+    /**
+     * @param PDO $pdo
+     */
     public function __construct(PDO $pdo)
     {
         $this->pdo = $pdo;
     }
-    public function editCity($id, $name, $countryId)
+
+    public function create(City $city)
     {
-        if (empty($name)) {
-            echo '<p style="color: red; size: ledger">Поле name не должно быть пустым!';
+        if (empty($city->getName()) && empty($city->getCountryId())) {
+            echo '<p style="color: red; size: ledger">Для города все поля доллжны быть запролнены!';
             return;
         }
-        $result = $this->pdo->exec(sprintf("UPDATE city SET `name`='%s', `country_id`='%s' WHERE id = %s", $name, $countryId,  $id));
+
+        $result = $this->pdo->exec(sprintf(
+            "INSERT INTO city(`name`, `country_id`) VALUE ('%s', '%s')",
+            $city->getName(),
+            $city->getCountryId()
+        ));
+
         if ($result === false) {
             var_dump($this->pdo->errorInfo());
         }
     }
-    public function createCity($name, $countryId)
+
+    public function edit(City $city)
     {
-        if (empty($name)) {
-            echo '<p style="color: red; size: ledger">Поле name не должно быть пустым!';
+        if (empty($city->getId())) {
+            echo '<p style="color: red; size: ledger">Обьект города нужно создать!';
             return;
         }
-        $result = $this->pdo->exec(sprintf("INSERT INTO city(`name`, `country_id`) VALUE ('%s', '%s')", $name, $countryId));
+
+        if (empty($city->getName()) && empty($city->getCountryId())) {
+            echo '<p style="color: red; size: ledger">Для города все поля доллжны быть запролнены!';
+            return;
+        }
+
+        $result = $this->pdo->exec(sprintf(
+            "UPDATE city SET `name`='%s', `country_id`='%s' WHERE id = %s",
+            $city->getName(),
+            $city->getCountryId(),
+            $city->getId()
+        ));
+
         if ($result === false) {
             var_dump($this->pdo->errorInfo());
         }
     }
-    /**
-     * @return City[]
-     */
-    public function getAllCities()
+
+    public function delete($id)
     {
-        $statement = $this->pdo->query("SELECT * FROM city");
-        $statement->setFetchMode(
-            PDO::FETCH_CLASS,
-            'City'
-        );
-        return $statement->fetchAll();
+        $result = $this->pdo->exec(sprintf("DELETE FROM city WHERE id = %s", $id));
+
+        if ($result === false) {
+            var_dump($this->pdo->errorInfo());
+        }
     }
+
     /**
      * @param $id
      * @return City
@@ -50,14 +75,21 @@ class CityDb
         $statement = $this->pdo->query(
             sprintf("SELECT * FROM city WHERE id = %s", $id)
         );
+
         return $statement->fetchObject('City');
     }
 
-    public function deleteCity($id)
+    /**
+     * @return City[]
+     */
+    public function getAll()
     {
-        $result = $this->pdo->exec (sprintf ("DELETE FROM city WHERE id = %s", $id));
-        if ($result === false){
-            var_dump ($this->pdo->errorInfo ());
-        }
+        $statement = $this->pdo->query("SELECT * FROM city");
+        $statement->setFetchMode(
+            PDO::FETCH_CLASS,
+            'City'
+        );
+
+        return $statement->fetchAll();
     }
 }

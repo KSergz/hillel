@@ -1,27 +1,38 @@
 <?php
+
 class City
 {
     private $id;
     private $name;
-    private $countryId;
+    private $country_id;
 
-
-    public function getId (): int 
+    /**
+     * @return mixed
+     */
+    public function getId()
     {
         return $this->id;
     }
 
-
-    public function getName ()
+    /**
+     * @return mixed
+     */
+    public function getName()
     {
         return $this->name;
     }
 
-
-    public function getCountryId ()
+    /**
+     * @return mixed
+     */
+    public function getCountryId()
     {
-        return $this->countryId;
+        return $this->country_id;
     }
 
-
+    public function update($name, $countryId)
+    {
+        $this->name = $name;
+        $this->country_id = $countryId;
+    }
 }

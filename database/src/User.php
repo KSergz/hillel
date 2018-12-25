@@ -32,4 +32,42 @@ class User
     {
         return $this->password;
     }
+
+    /**
+     * @param mixed $id
+     */
+    public function setId ($id): void
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * @param mixed $login
+     */
+    public function setLogin ($login): void
+    {
+        $this->login = $login;
+    }
+
+    /**
+     * @param mixed $last_login
+     */
+    public function setLastLogin ($last_login): void
+    {
+        $this->last_login = $last_login;
+    }
+
+    /**
+     * @param mixed $password
+     */
+    public function setPassword ($password): void
+    {
+        $this->password = $password;
+    }
+
+    public function update(string $login,  string $password)
+    {
+        $this->setLogin ($login);
+        $this->setPassword ($password);
+    }
 }
