@@ -15,13 +15,13 @@ if (!empty($_POST)  && key_exists('action', $_POST)) {
     switch ($_POST['action']) {
         case 'create' : {
             $profile = new Profile();
-            $profile->update($_POST['last_name'], $_POST['first_name'], $_POST['address'], $_POST['user_id'], $_POST['$city_id'] );
+            $profile->update($_POST['last_name'], $_POST['first_name'], $_POST['address'], $_POST['user_id'], $_POST['city_id'] );
             $profileDb->create($profile);
             break;
         }
         case 'update' : {
             $profile = $profileDb->getProfile($_POST['id']);
-            $profile->update($_POST['last_name'], $_POST['first_name'], $_POST['address'], $_POST['user_id'], $_POST['$city_id'] );
+            $profile->update($_POST['last_name'], $_POST['first_name'], $_POST['address'], $_POST['user_id'], $_POST['city_id'] );
 
             $profileDb->edit($profile);
             break;

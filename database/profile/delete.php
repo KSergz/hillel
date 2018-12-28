@@ -9,7 +9,7 @@ $id = $_GET['id'];
 $profile = $profileDb->getProfile ($id);
 
 echo "
-    <form>
+    <form action='index.php' method='post'>
         <input type='hidden' name='action' value='delete'>
         <input type='hidden' name='id' value='{$profile->getId ()}'>
              Вы точно хотите удалить профиль: {$profile->getLastName ()} {$profile->getFirstName ()} 
