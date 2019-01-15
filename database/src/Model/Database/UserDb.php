@@ -1,23 +1,37 @@
 <?php
-require_once 'src/User.php';
+
+namespace App\Model\Database;
+
+use App\Model\User;
+
 class UserDb
 {
     private $pdo;
 
-    public function __construct(PDO $pdo)
+    public function __construct(\PDO $pdo)
     {
         $this->pdo = $pdo;
     }
-
-    public function getUserByName($login)
+/*
+    public function editUser($id, $login, $password)
     {
-        $statement = $this->pdo->query(
-            sprintf("SELECT * FROM user WHERE `login` = '%s'", $login)
-        );
+        if (empty($login)) {
+            echo '<p style="color: red; size: ledger">Поле логин полжно не должно быть пустым!';
+            return;
+        }
 
-        return $statement->fetchObject('User');
+        $stmt = $this->pdo->prepare("UPDATE user SET `login`=:login, `password`=:password WHERE id = :id");
+
+        $stmt->bindValue('login', $login, \PDO::PARAM_STR);
+        $stmt->bindValue('password', $password, \PDO::PARAM_STR);
+        $stmt->bindValue('id', $id, \PDO::PARAM_INT);
+
+        $result =  $stmt->execute();
+        if ($result === false) {
+            var_dump($this->pdo->errorInfo());
+        }
     }
-
+*/
     public function edit(User $user)
     {
         if (empty($user->getId())) {
@@ -39,32 +53,31 @@ class UserDb
             $user->getLogin (),
             $user->getPassword (),
             $user->getId ()
-            ));
+        ));
 
         if ($result === false) {
             var_dump($this->pdo->errorInfo());
         }
     }
 
-    public function create(User $user)
+    public function getUserByName($login)
     {
-        if (empty($user->getLogin ())) {
+        $statement = $this->pdo->query(
+            sprintf("SELECT * FROM user WHERE `login` = '%s'", $login)
+        );
+
+        return $statement->fetchObject(User::class);
+    }
+
+    public function createUser($login, $password)
+    {
+        if (empty($login)) {
             echo '<p style="color: red; size: ledger">Поле логин полжно не должно быть пустым!';
             return;
         }
 
-        $userCheck = $this->getUserByName($user->getLogin ());
-
-        if ($userCheck instanceof User) {
-            echo sprintf('<p style="color: red; size: ledger">Логин "%s" уже существует!', $user->getLogin ()) ;
-            return;
-        }
-
-        $result = $this->pdo->exec(sprintf("INSERT INTO user(`login`, `password`) VALUE ('%s', '%s')",
-            $user->getLogin (),
-            $user->getPassword ()
-
-            ));
+        $stmt = $this->pdo->prepare("INSERT INTO user(`login`, `password`) VALUE (?, ?)");
+        $result =  $stmt->execute([$login, $password]);
 
         if ($result === false) {
             var_dump($this->pdo->errorInfo());
@@ -74,12 +87,12 @@ class UserDb
     /**
      * @return User[]
      */
-    public function getAll()
+    public function getAllUsers()
     {
         $statement = $this->pdo->query("SELECT * FROM user");
         $statement->setFetchMode(
-            PDO::FETCH_CLASS,
-            'User'
+            \PDO::FETCH_CLASS,
+            User::class
         );
 
         return $statement->fetchAll();
@@ -95,10 +108,10 @@ class UserDb
             sprintf("SELECT * FROM user WHERE id = %s", $id)
         );
 
-        return $statement->fetchObject('User');
+        return $statement->fetchObject(User::class);
     }
 
-    public function delete($id)
+    public function deleteUser($id)
     {
         $result = $this->pdo->exec(sprintf("DELETE FROM user WHERE id = %s", $id));
 
@@ -106,6 +119,4 @@ class UserDb
             var_dump($this->pdo->errorInfo());
         }
     }
-
-
 }

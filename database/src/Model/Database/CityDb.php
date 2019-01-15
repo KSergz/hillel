@@ -1,16 +1,20 @@
 <?php
-require_once 'City.php';
+
+namespace App\Model\Database;
+
+use App\Model\City;
+
 class CityDb
 {
     /**
-     * @var PDO
+     * @var \PDO
      */
     private $pdo;
 
     /**
-     * @param PDO $pdo
+     * @param \PDO $pdo
      */
-    public function __construct(PDO $pdo)
+    public function __construct(\PDO $pdo)
     {
         $this->pdo = $pdo;
     }
@@ -18,7 +22,7 @@ class CityDb
     public function create(City $city)
     {
         if (empty($city->getName()) && empty($city->getCountryId())) {
-            echo '<p style="color: red; size: ledger">Для города все поля доллжны быть запролнены!';
+            echo '<p style="color: red; size: ledger">Для страны все поля доллжны быть запролнены!';
             return;
         }
 
@@ -36,12 +40,12 @@ class CityDb
     public function edit(City $city)
     {
         if (empty($city->getId())) {
-            echo '<p style="color: red; size: ledger">Обьект города нужно создать!';
+            echo '<p style="color: red; size: ledger">Обьект страны нужно создать!';
             return;
         }
 
         if (empty($city->getName()) && empty($city->getCountryId())) {
-            echo '<p style="color: red; size: ledger">Для города все поля доллжны быть запролнены!';
+            echo '<p style="color: red; size: ledger">Для страны все поля доллжны быть запролнены!';
             return;
         }
 
@@ -73,10 +77,15 @@ class CityDb
     public function getCity($id)
     {
         $statement = $this->pdo->query(
-            sprintf("SELECT * FROM city WHERE id = %s", $id)
+            sprintf("
+              SELECT ct.id, ct.name, cr.name as country_name
+                FROM city ct
+                LEFT JOIN country cr on ct.country_id = cr.id
+                WHERE id = %s", $id
+            )
         );
 
-        return $statement->fetchObject('City');
+        return $statement->fetchObject(City::class);
     }
 
     /**
@@ -84,10 +93,14 @@ class CityDb
      */
     public function getAll()
     {
-        $statement = $this->pdo->query("SELECT * FROM city");
+        $statement = $this->pdo->query("
+          SELECT ct.id, ct.name, cr.name as country_name
+            FROM city ct
+            LEFT JOIN country cr on ct.country_id = cr.id;"
+        );
         $statement->setFetchMode(
-            PDO::FETCH_CLASS,
-            'City'
+            \PDO::FETCH_CLASS,
+            City::class
         );
 
         return $statement->fetchAll();

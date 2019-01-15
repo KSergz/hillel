@@ -1,14 +1,16 @@
 <?php
 
+namespace App\Serves;
+
 class ConnectDb
 {
     public static function get()
     {
         $dsn = 'mysql:host=localhost;dbname=my_test';
-        $username = 'mysql';
-        $password = 'mysql';
+        $username = 'root';
+        $password = '';
         $options = [];
 
-        return new PDO($dsn, $username, $password, $options);
+        return new \PDO($dsn, $username, $password, $options);
     }
 }
