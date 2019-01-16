@@ -69,6 +69,9 @@ class UserDb
         return $statement->fetchObject(User::class);
     }
 
+
+
+    /*
     public function createUser($login, $password)
     {
         if (empty($login)) {
@@ -83,6 +86,35 @@ class UserDb
             var_dump($this->pdo->errorInfo());
         }
     }
+*/
+
+
+    public function create(User $user)
+    {
+
+        if (empty($user->getLogin ())) {
+            echo '<p style="color: red; size: ledger">Поле логин полжно не должно быть пустым!';
+            return;
+        }
+        $userCheck = $this->getUserByName($user->getLogin ());
+
+        if ($userCheck instanceof User && $userCheck->getId() != $user->getId()) {
+            echo sprintf('<p style="color: red; size: ledger">Логин "%s" уже существует!', $user->getLogin ()) ;
+            return;
+        }
+        $result = $this->pdo->exec(sprintf("INSERT INTO user(`login`, `password` ) VALUE ('%s', '%s')",
+            $user->getLogin (),
+            $user->getPassword ()
+
+        ));
+
+        if ($result === false) {
+            var_dump($this->pdo->errorInfo());
+        }
+    }
+
+
+
 
     /**
      * @return User[]

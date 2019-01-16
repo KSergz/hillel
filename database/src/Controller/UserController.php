@@ -64,9 +64,40 @@ class UserController extends Controller
 
     }
 
-    public function createAction()
+    public function addAction()
     {
-        var_dump('createAction');
+        $validates = [];
+        $login = '';
+        $password = '';
+
+        if (array_key_exists('action', $_POST) && $_POST['action'] === 'add') {
+
+            $login = $_POST['login'];
+            $password = $_POST['password'];
+
+
+            $this->validateLogin($validates, $login);
+            $this->validatePassword($validates, $password);
+
+
+            if (count($validates) === 0) {
+                $user = new User();
+                $user->update($login, $password);
+
+                $this->userDb->create($user);
+
+                $this->redirect('/users/show');
+            }
+        }
+
+        $this->view([
+            'error' => $validates,
+            'login' => $login,
+            'password' => $password,
+
+        ],
+            'users/add_user'
+        );
     }
 
     public function deleteAction()

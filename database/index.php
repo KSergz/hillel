@@ -27,6 +27,16 @@ try {
         '_controller' => 'App\Controller\UserController::deleteAction',
         'methods' => 'GET'
     )));
+
+    $collection->attachRoute(new Route('/users/add', array(
+        '_controller' => 'App\Controller\UserController::addAction',
+        'methods' => 'GET'
+    )));
+    $collection->attachRoute(new Route('/users/add', array(
+        '_controller' => 'App\Controller\UserController::addAction',
+        'methods' => 'POST'
+    )));
+
     #Users
     #
     #
